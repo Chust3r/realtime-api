@@ -12,7 +12,7 @@
 		"paths": {
 			"~services/*": ["services/*"],
 			"~lib/*": ["lib/*"],
-			"~routes/*": ["routes/*"],
+			"~routes": ["routes/index.ts"],
 			"~drizzle/*": ["drizzle/*"],
 			"~db": ["lib/drizzle.ts"]
 		}
