@@ -18,14 +18,18 @@ type JWTKeys = keyof JWTMap
 type JWTVerifyResult<T> = {
 	isValid: boolean
 	data?: T
+	error?: string
 }
 
-//→ JST SERVICE CLASS
-
 class JWT {
+	//→ SIGN JWT
 	async sign<K extends JWTKeys>(type: K, payload: Record<string, unknown>) {
 		try {
 			const config = jwtMap[type]
+
+			if (!config) {
+				throw new Error(`[JWTService]: No config found for ${type}`)
+			}
 
 			const secret = new TextEncoder().encode(config.secret)
 
@@ -39,9 +43,11 @@ class JWT {
 
 			return token
 		} catch (e) {
-			console.error('[JWTService]: Error while signing token')
+			throw new Error('[JWTService]: Error signing token')
 		}
 	}
+
+	//→ VERIFY JWT
 
 	async verify<T, K extends JWTKeys>(
 		type: K,
@@ -65,6 +71,7 @@ class JWT {
 		} catch (e) {
 			return {
 				isValid: false,
+				error: '[JWTService]: Error verifying token',
 			}
 		}
 	}
