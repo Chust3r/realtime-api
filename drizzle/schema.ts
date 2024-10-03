@@ -1,10 +1,8 @@
-import { pgSchema, serial, text, timestamp, boolean } from 'drizzle-orm/pg-core'
-
-const realtime = pgSchema('realtime')
+import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
 
 //→ USERS TABLE
 
-const users = realtime.table('USERS', {
+export const users = pgTable('USERS', {
 	id: serial('id').primaryKey(),
 	email: text('email').notNull().unique(),
 	password: text('password').notNull(),
@@ -20,7 +18,7 @@ const users = realtime.table('USERS', {
 
 //→ REFRESH TOKENS TABLE
 
-const refresh_tokens = realtime.table('REFRESH_TOKENS', {
+export const refresh_tokens = pgTable('REFRESH_TOKENS', {
 	id: serial('id').primaryKey(),
 	refresh_token: text('refresh_token').notNull().unique(),
 	created_at: timestamp('created_at', {

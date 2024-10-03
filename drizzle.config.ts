@@ -7,5 +7,7 @@ export default defineConfig({
 		url: DATABASE_URL,
 	},
 	schema: './drizzle/schema.ts',
-	out: './drizzle',
+	out: './drizzle/migrations',
+	verbose:true,
+	strict: true,
 })
