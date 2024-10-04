@@ -8,6 +8,11 @@ const registerSchema = object({
 	password: pipe(string(), minLength(6)),
 })
 
+const loginSchema = object({
+	email: pipe(string(), email()),
+	password: pipe(string(), minLength(6)),
+})
+
 //→ VALIDATE RESULT TYPE
 
 interface IValidateResult<T> {
@@ -20,6 +25,7 @@ interface IValidateResult<T> {
 
 const schemaMap = {
 	register: registerSchema,
+	login: loginSchema,
 } as const
 
 //→ DYNAMIC TYPES FOR SCHEMAS
