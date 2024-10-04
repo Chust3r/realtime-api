@@ -3,24 +3,36 @@ import { validator } from '~services/validator'
 import { user } from '~services/user'
 import { jwt } from '~services/jwt'
 import { setCookie } from 'hono/cookie'
+import { SuccessResponse, ErrorResponse } from '~lib/response'
 
 export const register = new Hono()
 
 register.post('/register', async (c) => {
-	const { req, json } = c
 	try {
-		const body = (await req.json()) || {}
+		let body: Record<string, string> = {}
 
-		const { isValid, errors, data } = validator.validate('register', body)
+		//→ TRY PARSING BODY TO JSON
+
+		try {
+			body = await c.req.json()
+		} catch (e) {
+			return ErrorResponse(400, 'Invalid Request Body', {
+				message: 'Body must be in JSON format',
+			})
+		}
+
+		const { isValid, data } = validator.validate('register', body)
 
 		if (!isValid || !data) {
-			return json({ ok: false, errors }, 400)
+			return ErrorResponse(400, 'Validation Error')
 		}
 
 		const emailExists = await user.emailExists(data.email)
 
 		if (emailExists) {
-			return json({ ok: false, errors: ['Email already in use'] }, 409)
+			return ErrorResponse(409, 'Email Already Exists', {
+				email: data.email,
+			})
 		}
 
 		const newUser = await user.create(data)
@@ -40,8 +52,8 @@ register.post('/register', async (c) => {
 			httpOnly: true,
 		})
 
-		return json({ ok: true }, 201)
+		return SuccessResponse(201, 'Registered')
 	} catch (e) {
-		return json({ errors: ['Internal Server Error'] }, 500)
+		return ErrorResponse(500, 'Internal Server Error')
 	}
 })
