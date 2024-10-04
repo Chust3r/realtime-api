@@ -55,6 +55,30 @@ class UserService {
 			throw new Error('[UserService]: Error Creating User')
 		}
 	}
+
+	async verifyPassword(password: string, hashedPassword: string) {
+		try {
+			const isValid = await verify(hashedPassword, password)
+
+			return isValid
+		} catch (e) {
+			console.error('[UserService]: Error while verifying password', e)
+			throw new Error('[UserService]: Error while verifying password')
+		}
+	}
+
+	async getUser(email: string) {
+		try {
+			const result = await client.query.users.findFirst({
+				where: (user, { eq }) => eq(user.email, email),
+			})
+
+			return result
+		} catch (e) {
+			console.error('[UserService]: Error while getting user', e)
+			throw new Error('[UserService]: Error while getting user')
+		}
+	}
 }
 
 export const user = new UserService()
