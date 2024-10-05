@@ -2,7 +2,6 @@ import { Hono } from 'hono'
 import { validator } from '~services/validator'
 import { user } from '~services/user'
 import { jwt } from '~services/jwt'
-import { setCookie } from 'hono/cookie'
 import { SuccessResponse, ErrorResponse } from '~lib/response'
 
 export const login = new Hono()
@@ -60,16 +59,10 @@ login.post('/login', async (c) => {
 			email: userExists.email,
 		})
 
-		//→ SET COOKIES
-
-		setCookie(c, 'token', token, {
-			httpOnly: true,
+		return SuccessResponse(200, 'Login Successful', {
+			token,
+			refreshToken,
 		})
-		setCookie(c, 'refresh_token', refreshToken, {
-			httpOnly: true,
-		})
-
-		return SuccessResponse(200, 'Login Successful')
 	} catch (e) {
 		return ErrorResponse(500, 'Internal Server Error')
 	}

@@ -2,7 +2,6 @@ import { Hono } from 'hono'
 import { validator } from '~services/validator'
 import { user } from '~services/user'
 import { jwt } from '~services/jwt'
-import { setCookie } from 'hono/cookie'
 import { SuccessResponse, ErrorResponse } from '~lib/response'
 
 export const register = new Hono()
@@ -43,16 +42,10 @@ register.post('/register', async (c) => {
 
 		const refreshToken = await jwt.sign('refresh', newUser)
 
-		//→ SET COOKIES
-
-		setCookie(c, 'token', token, {
-			httpOnly: true,
+		return SuccessResponse(201, 'Registered', {
+			token,
+			refreshToken,
 		})
-		setCookie(c, 'refresh_token', refreshToken, {
-			httpOnly: true,
-		})
-
-		return SuccessResponse(201, 'Registered')
 	} catch (e) {
 		return ErrorResponse(500, 'Internal Server Error')
 	}
