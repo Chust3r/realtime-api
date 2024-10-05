@@ -16,7 +16,7 @@ const port = 3000
 
 console.log(`Server is running on port http://localhost:${port}`)
 
-serve({
+const server = serve({
 	fetch: app.fetch,
 	port,
 })
