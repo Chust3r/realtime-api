@@ -2,11 +2,11 @@ import { SignJWT, jwtVerify } from 'jose'
 import { JWT_SECRET, JWT_EXPIRES_IN, JWT_REFRESH_EXPIRES_IN } from '~consts'
 
 const jwtMap = {
-	access: {
+	RLAT: {
 		expiresIn: JWT_EXPIRES_IN,
 		secret: JWT_SECRET,
 	},
-	refresh: {
+	RLRT: {
 		expiresIn: JWT_REFRESH_EXPIRES_IN,
 		secret: JWT_SECRET,
 	},
@@ -21,7 +21,7 @@ type JWTVerifyResult<T> = {
 	error?: string
 }
 
-class JWT {
+class JWTService {
 	//→ SIGN JWT
 	async sign<K extends JWTKeys>(type: K, payload: Record<string, unknown>) {
 		try {
@@ -77,4 +77,4 @@ class JWT {
 	}
 }
 
-export const jwt = new JWT()
+export const JWT = new JWTService()

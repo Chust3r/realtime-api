@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
-import { validator } from '~services/validator'
-import { user } from '~services/user'
-import { jwt } from '~services/jwt'
+import { Validator } from '~services/validator'
+import { User } from '~services/user'
+import { JWT } from '~services/jwt'
 import { SuccessResponse, ErrorResponse } from '~lib/response'
 import { setCookie } from 'hono/cookie'
 
@@ -21,13 +21,13 @@ register.post('/register', async (c) => {
 			})
 		}
 
-		const { isValid, data } = validator.validate('register', body)
+		const { isValid, data } = Validator.validate('register', body)
 
 		if (!isValid || !data) {
 			return ErrorResponse(400, 'Validation Error')
 		}
 
-		const emailExists = await user.emailExists(data.email)
+		const emailExists = await User.emailExists(data.email)
 
 		if (emailExists) {
 			return ErrorResponse(409, 'Email Already Exists', {
@@ -35,23 +35,23 @@ register.post('/register', async (c) => {
 			})
 		}
 
-		const newUser = await user.create(data)
+		const newUser = await User.create(data)
 
 		//→ TODO:SEND EMAIL TO VERIFY ACCOUNT
 
 		//→ CREATE JWT TOKEN
 
-		const token = await jwt.sign('access', newUser)
+		const RLAT = await JWT.sign('RLAT', newUser)
 
-		const refreshToken = await jwt.sign('refresh', newUser)
+		const RLRT = await JWT.sign('RLRT', newUser)
 
 		//→ SET COOKIES
 
-		setCookie(c, 'RLAT', token, {
+		setCookie(c, 'RLAT', RLAT, {
 			httpOnly: true,
 		})
 
-		setCookie(c, 'RLRT', refreshToken, {
+		setCookie(c, 'RLRT', RLRT, {
 			httpOnly: true,
 		})
 

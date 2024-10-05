@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
-import { validator } from '~services/validator'
-import { user } from '~services/user'
-import { jwt } from '~services/jwt'
+import { Validator } from '~services/validator'
+import { User } from '~services/user'
+import { JWT } from '~services/jwt'
 import { SuccessResponse, ErrorResponse } from '~lib/response'
 import { setCookie } from 'hono/cookie'
 
@@ -23,7 +23,7 @@ login.post('/login', async (c) => {
 
 		//→ VALIDATE JSON BODY
 
-		const { isValid, data } = validator.validate('login', body)
+		const { isValid, data } = Validator.validate('login', body)
 
 		if (!isValid || !data) {
 			return ErrorResponse(400, 'Validation Error')
@@ -31,17 +31,17 @@ login.post('/login', async (c) => {
 
 		//→ CHECK IF USER EXISTS
 
-		const userExists = await user.getUser(data.email)
+		const user = await User.getUser(data.email)
 
-		if (!userExists) {
+		if (!user) {
 			return ErrorResponse(404, 'User Not Found')
 		}
 
 		//→ CHECK IF PASSWORD IS CORRECT
 
-		const passwordIsCorrect = await user.verifyPassword(
+		const passwordIsCorrect = await User.verifyPassword(
 			data.password,
-			userExists.password
+			user.id
 		)
 
 		if (!passwordIsCorrect) {
@@ -50,23 +50,23 @@ login.post('/login', async (c) => {
 
 		//→ CREATE JWT TOKEN
 
-		const token = await jwt.sign('access', {
-			id: userExists.id,
-			email: userExists.email,
+		const RLAT = await JWT.sign('RLAT', {
+			id: user.id,
+			email: user.email,
 		})
 
-		const refreshToken = await jwt.sign('refresh', {
-			id: userExists.id,
-			email: userExists.email,
+		const RLRT = await JWT.sign('RLRT', {
+			id: user.id,
+			email: user.email,
 		})
 
 		//→ SET COOKIES
 
-		setCookie(c, 'RLAT', token, {
+		setCookie(c, 'RLAT', RLAT, {
 			httpOnly: true,
 		})
 
-		setCookie(c, 'RLRT', refreshToken, {
+		setCookie(c, 'RLRT', RLRT, {
 			httpOnly: true,
 		})
 

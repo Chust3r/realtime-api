@@ -36,7 +36,7 @@ type InferSchemaType<K extends SchemaKeys> = InferInput<SchemaMap[K]>
 
 //→ VALIDATOR CLASS
 
-class Validator {
+class ValidatorService {
 	private getSchema<K extends SchemaKeys>(type: K): SchemaMap[K] {
 		const schema = schemaMap[type]
 
@@ -76,4 +76,4 @@ class Validator {
 	}
 }
 
-export const validator = new Validator()
+export const Validator = new ValidatorService()
