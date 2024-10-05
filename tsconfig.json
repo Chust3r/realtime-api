@@ -15,7 +15,8 @@
 			"~routes": ["routes/index.ts"],
 			"~drizzle/*": ["drizzle/*"],
 			"~db": ["lib/drizzle.ts"],
-			"~consts": ["lib/consts.ts"]
+			"~consts": ["lib/consts.ts"],
+			"~middlewares/*": ["middlewares/*"],
 		}
 	}
 }
