@@ -79,6 +79,19 @@ class UserService {
 			throw new Error('[UserService]: Error while getting user')
 		}
 	}
+
+	async getUserById(id: string) {
+		try {
+			const result = await client.query.users.findFirst({
+				where: (user, { eq }) => eq(user.id, id),
+			})
+
+			return result
+		} catch (e) {
+			console.error('[UserService]: Error while getting user', e)
+			throw new Error('[UserService]: Error while getting user')
+		}
+	}
 }
 
-export const user = new UserService()
+export const User = new UserService()
