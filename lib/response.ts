@@ -1,3 +1,5 @@
+import type { Context } from 'hono'
+
 type SuccessResponse<T> = {
 	status: 'success'
 	message: string
@@ -27,6 +29,7 @@ type T_HTTP_CODES = typeof HTTP_CODES
 type T_HTTP_CODE = keyof T_HTTP_CODES
 
 export const SuccessResponse = <T>(
+	c: Context,
 	code: T_HTTP_CODE,
 	message: string,
 	data?: T
@@ -37,10 +40,7 @@ export const SuccessResponse = <T>(
 		data,
 	}
 
-	return Response.json(res, {
-		status: code,
-		statusText: HTTP_CODES[code],
-	})
+	return c.json(res, { status: code, statusText: HTTP_CODES[code] })
 }
 
 export const ErrorResponse = (

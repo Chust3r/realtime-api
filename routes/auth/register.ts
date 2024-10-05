@@ -3,6 +3,7 @@ import { validator } from '~services/validator'
 import { user } from '~services/user'
 import { jwt } from '~services/jwt'
 import { SuccessResponse, ErrorResponse } from '~lib/response'
+import { setCookie } from 'hono/cookie'
 
 export const register = new Hono()
 
@@ -36,16 +37,25 @@ register.post('/register', async (c) => {
 
 		const newUser = await user.create(data)
 
-		//→ TODO:SEND EMAIL
+		//→ TODO:SEND EMAIL TO VERIFY ACCOUNT
+
+		//→ CREATE JWT TOKEN
 
 		const token = await jwt.sign('access', newUser)
 
 		const refreshToken = await jwt.sign('refresh', newUser)
 
-		return SuccessResponse(201, 'Registered', {
-			token,
-			refreshToken,
+		//→ SET COOKIES
+
+		setCookie(c, 'RLAT', token, {
+			httpOnly: true,
 		})
+
+		setCookie(c, 'RLRT', refreshToken, {
+			httpOnly: true,
+		})
+
+		return SuccessResponse(c, 201, 'OK')
 	} catch (e) {
 		return ErrorResponse(500, 'Internal Server Error')
 	}
