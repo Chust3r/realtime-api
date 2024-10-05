@@ -41,7 +41,7 @@ login.post('/login', async (c) => {
 
 		const passwordIsCorrect = await User.verifyPassword(
 			data.password,
-			user.id
+			user.password
 		)
 
 		if (!passwordIsCorrect) {
